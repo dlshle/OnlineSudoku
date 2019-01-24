@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>OnlineSudoku(test)</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="sudoku.js">
+		</script>
+	</head>
+	<body>
+		<script>	
+			function getSeeds(){
+				let n = document.getElementsByName("seeds")[0];
+				console.log(n.value);
+				if(isNaN(n.value)||n<2){
+					alert("Seeds can not exceed 80 or less than 2");
+					return -1;
+				}
+				return n.value;
+			}
+
+			function playGame(){
+				let seeds = getSeeds();
+				if(seeds==-1)
+					return ;
+				sudokuGame.newGame(seeds);
+				let node = document.getElementById("game");
+				drawHTMLGrid(node);
+			}
+		</script>
+		<div id="game">
+
+		</div>
+		Number of seeds:
+		<br>
+		<input type="text" name="seeds"/>
+		<br>
+		<button type="button" onclick="playGame()">New game</button>
+		<br>
+		<button type="button">Check game</button>
+		<br>
+	</body>
+</html>

@@ -1,0 +1,15 @@
+body {margin : 0pt;}
+
+input {
+	text-rendering : auto; 
+	text-transform : none; 
+	text-indent : 0px; 
+	display : inline-block; 
+	font-family : Arial;
+	font-size: 13px;
+	align: center;
+}
+
+table,td {padding:0pt;}
+
+
