@@ -1,6 +1,13 @@
+
+function isNumeric(target){
+	return !isNaN(parseFloat(target))&&isFinite(target);
+}
+
 var sudokuGame = {
 	
 	puzzleGrid:[],
+	
+	unknowns: [],
 
 	seeds: 0,
 
@@ -15,7 +22,7 @@ var sudokuGame = {
 		//assign seeds
 		this.seeds = seeds;
 
-		//create new puzzleGrid
+		//create new puzzleGrid 
 		this.puzzleGrid = [];
 		for(let i=0;i<9;i++){
 			this.puzzleGrid.push([]);
@@ -23,7 +30,7 @@ var sudokuGame = {
 				this.puzzleGrid[i].push(0);
 			}
 		}
-	
+			
 		//add valid random numbers to the grid
 		let rand,randX,randY;
 		while(seeds-->0){
@@ -31,17 +38,17 @@ var sudokuGame = {
 				rand = this.randomInt(1,9);
 				randX = this.randomInt(0,8);
 				randY = this.randomInt(0,8);
-			} while(!this.isValid(randX,randY,rand));
+			} while(this.isAvailable(randX,randY)&&(!this.isValid(randX,randY,rand)));
+			console.log(randX+","+randY+":"+rand+" finished");
 			this.puzzleGrid[randX][randY] = rand;
 		}
-
-		//finish filling numbers
-
 	}, 
 
+	isAvailable: function(x,y){
+		return this.puzzleGrid[x][y]!=0;
+	},
+
 	isValid: function(x,y,n){
-		if(this.puzzleGrid[x][y]>0)
-			return false;
 		let vx = 0, vy = 0;
 		//up,down
 		while(vy<9){
@@ -49,8 +56,11 @@ var sudokuGame = {
 				vy++;
 				continue;
 			}
-			if(this.puzzleGrid[x][vy++]==n)
+			console.log("checking "+x+","+y+":"+n+" with "+x+","+vy+":"+this.puzzleGrid[x][vy]);
+			if(this.puzzleGrid[x][vy++]==n){
+				//console.log("invalid y for ("+x+","+y+") where n="+n+", ("+x+","+vy+")="+this.puzzleGrid[x][vy-1]);
 				return false;
+			}
 		}
 		//left,right
 		while(vx<9){
@@ -58,8 +68,11 @@ var sudokuGame = {
 				vx++;
 				continue;
 			}
-			if(this.puzzleGrid[vx++][y]==n)
+			//console.log("checking "+x+","+y+":"+n+" with "+vx+","+y+":"+this.puzzleGrid[vx][y]);
+			if(this.puzzleGrid[vx++][y]==n){
+				console.log("invalid x for ("+x+","+y+") where n="+n+", ("+vx+","+y+")="+this.puzzleGrid[x][vy-1]);
 				return false;
+			}
 		}
 		//in grid
 		let gx=Math.floor(x/3)*3, gy=Math.floor(y/3)*3;
@@ -85,7 +98,7 @@ var sudokuGame = {
 	 * randomInt returns a random integer within range of low to high.
 	 */
 	randomInt: function(low, high){
-		return Math.floor(Math.random()*(high-low)+low);
+		return Math.round(Math.random()*(high-low)+low);
 	},
 
 	getPile: function(x,y){
@@ -99,18 +112,21 @@ var sudokuGame = {
  * drawGrid draws the game grid on the HTMLNode node.
  */
 function drawHTMLGrid(node) {
+	//clear the node first
+	node.innerHTML = "";
+
 	//table tr th
 	let table = document.createElement("table");
 	
 	//insert trs and ths
 	for(let i=0;i<9;i++){
 		let tr = document.createElement("tr");
-		tr.setAttribute("id","x"+i);
+		tr.setAttribute("id","y"+i);
 		for(let j=0;j<9;j++){
 			let td = document.createElement("td");
-			td.setAttribute("id","x"+i+"y"+j);
+			td.setAttribute("id","x"+j+"y"+i);
 			let pile;
-			let num = sudokuGame.getPile(i,j);
+			let num = sudokuGame.getPile(j,i);
 			pile = document.createElement("input");
 			//will use css later
 			pile.setAttribute("autocomplete","off");
@@ -121,13 +137,46 @@ function drawHTMLGrid(node) {
 				pile.setAttribute("readonly","");
 				pile.setAttribute("value",num);
 			}
-			pile.setAttribute("id",i+","+j);
+			pile.setAttribute("id",j+","+i);
 			td.append(pile);	
 			tr.append(td);
 		}
 		table.append(tr);
 	}
 	node.append(table);
+}
+
+/*
+ *checkResult checks the result one by one
+ */
+function checkResult(){
+	for(let i=0;i<9;i++){
+		for(let j=0;j<9;j++){
+			if(sudokuGame.getPile(i,j)!=0){
+				let ansNode = document.getElementById(i+","+j);
+				if(!ansNode){
+					alert("invalid game grid!");
+					return false;
+				}
+				let ans = ansNode.value;
+				if(!isNumeric(ans)){
+					alert("invalid input for number at ("+i+","+j+")!");
+					return false;
+				}
+				if(ans<1||ans>9){
+					alert("invalid input for number at ("+i+","+j+") (the value should be in the range of [1,9]!");
+					return false;
+				}
+				
+				if(!sudokuGame.isValid(i,j,ans)){
+					alert("a mistake is made at ("+i+","+j+")!");
+					return false;
+				}
+			}
+		}
+	}
+	alert("Wow, you are amazing! No mistake has been made. This is the perfect solution!");
+	return true;
 }
 
 /*

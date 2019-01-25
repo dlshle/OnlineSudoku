@@ -10,7 +10,7 @@
 			function getSeeds(){
 				let n = document.getElementsByName("seeds")[0];
 				console.log(n.value);
-				if(isNaN(n.value)||n<2){
+				if(!isNumeric(n.value)||n<2){
 					alert("Seeds can not exceed 80 or less than 2");
 					return -1;
 				}
