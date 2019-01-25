@@ -3,110 +3,108 @@ function isNumeric(target){
 	return !isNaN(parseFloat(target))&&isFinite(target);
 }
 
-var sudokuGame = {
+var puzzleGrid = [];
 	
-	puzzleGrid:[],
-	
-	unknowns: [],
+var unknowns = [];
 
-	seeds: 0,
+var seeds = 0;
 
-	/*
-	 * newGame sets the puzzleGrid empty and fills 9 length 9 lists
-	 * and fills them all 0s and fills n(seeds) valid numbers. 
-	 */
-	newGame: function(seeds) {
-		//check if the seeds is valid
-		if(seeds<0||seeds>80)
-			return false;
-		//assign seeds
-		this.seeds = seeds;
+/*
+ * newGame sets the puzzleGrid empty and fills 9 length 9 lists
+ * and fills them all 0s and fills n(seeds) valid numbers. 
+ */
+function newGame(seeds) {
+	//check if the seeds is valid
+	if(seeds<0||seeds>80)
+		return false;
+	//assign seeds
+	 seeds = seeds;
 
-		//create new puzzleGrid 
-		this.puzzleGrid = [];
-		for(let i=0;i<9;i++){
-			this.puzzleGrid.push([]);
-			for(let j=0;j<9;j++){
-				this.puzzleGrid[i].push(0);
-			}
+	//create new puzzleGrid 
+	 puzzleGrid = [];
+	for(let i=0;i<9;i++){
+		 puzzleGrid.push([]);
+		for(let j=0;j<9;j++){
+			 puzzleGrid[i].push(0);
 		}
-			
-		//add valid random numbers to the grid
-		let rand,randX,randY;
-		while(seeds-->0){
-			do{
-				rand = this.randomInt(1,9);
-				randX = this.randomInt(0,8);
-				randY = this.randomInt(0,8);
-			} while(this.isAvailable(randX,randY)&&(!this.isValid(randX,randY,rand)));
-			console.log(randX+","+randY+":"+rand+" finished");
-			this.puzzleGrid[randX][randY] = rand;
-		}
-	}, 
-
-	isAvailable: function(x,y){
-		return this.puzzleGrid[x][y]!=0;
-	},
-
-	isValid: function(x,y,n){
-		let vx = 0, vy = 0;
-		//up,down
-		while(vy<9){
-			if(vy==y){
-				vy++;
-				continue;
-			}
-			console.log("checking "+x+","+y+":"+n+" with "+x+","+vy+":"+this.puzzleGrid[x][vy]);
-			if(this.puzzleGrid[x][vy++]==n){
-				//console.log("invalid y for ("+x+","+y+") where n="+n+", ("+x+","+vy+")="+this.puzzleGrid[x][vy-1]);
-				return false;
-			}
-		}
-		//left,right
-		while(vx<9){
-			if(vx==x){
-				vx++;
-				continue;
-			}
-			//console.log("checking "+x+","+y+":"+n+" with "+vx+","+y+":"+this.puzzleGrid[vx][y]);
-			if(this.puzzleGrid[vx++][y]==n){
-				console.log("invalid x for ("+x+","+y+") where n="+n+", ("+vx+","+y+")="+this.puzzleGrid[x][vy-1]);
-				return false;
-			}
-		}
-		//in grid
-		let gx=Math.floor(x/3)*3, gy=Math.floor(y/3)*3;
-		for(vx=gx;vx<gx+3;vx++){
-			for(vy=gy;vy<gy+3;vy++){
-				if(vx==x&&vy==y)
-					continue;
-				if(this.puzzleGrid[vx][vy]==n)
-					return false;
-			}
-		}	
-		return true;	
-	},
-
-	/*
-	 * isInBound is not really used for now, but will be useful later?
-	 */
-	isInBound: function(x,y){
-		return x>-1&&x<9&&y>-1&&y<9;
-	},
-
-	/*
-	 * randomInt returns a random integer within range of low to high.
-	 */
-	randomInt: function(low, high){
-		return Math.round(Math.random()*(high-low)+low);
-	},
-
-	getPile: function(x,y){
-		if(!this.isInBound(x,y))
-			return -1;
-		return this.puzzleGrid[x][y];
+	}
+		
+	//add valid random numbers to the grid
+	let rand,randX,randY;
+	while(seeds-->0){
+		do{
+			rand =  randomInt(1,9);
+			randX =  randomInt(0,8);
+			randY =  randomInt(0,8);
+		} while( isAvailable(randX,randY)&&(! isValid(randX,randY,rand)));
+		console.log(randX+","+randY+":"+rand+" finished");
+		 puzzleGrid[randX][randY] = rand;
 	}
 }
+
+function isAvailable(x,y){
+	return  puzzleGrid[x][y]!=0;
+}
+
+function isValid(x,y,n){
+	let vx = 0, vy = 0;
+	//up,down
+	while(vy<9){
+		if(vy==y){
+			vy++;
+			continue;
+		}
+		console.log("checking "+x+","+y+":"+n+" with "+x+","+vy+":"+ puzzleGrid[x][vy]);
+		if( puzzleGrid[x][vy++]==n){
+			//console.log("invalid y for ("+x+","+y+") where n="+n+", ("+x+","+vy+")="+ puzzleGrid[x][vy-1]);
+			return false;
+		}
+	}
+	//left,right
+	while(vx<9){
+		if(vx==x){
+			vx++;
+			continue;
+		}
+		//console.log("checking "+x+","+y+":"+n+" with "+vx+","+y+":"+ puzzleGrid[vx][y]);
+		if( puzzleGrid[vx++][y]==n){
+			console.log("invalid x for ("+x+","+y+") where n="+n+", ("+vx+","+y+")="+ puzzleGrid[x][vy-1]);
+			return false;
+		}
+	}
+	//in grid
+	let gx=Math.floor(x/3)*3, gy=Math.floor(y/3)*3;
+	for(vx=gx;vx<gx+3;vx++){
+		for(vy=gy;vy<gy+3;vy++){
+			if(vx==x&&vy==y)
+				continue;
+			if( puzzleGrid[vx][vy]==n)
+				return false;
+		}
+	}	
+	return true;	
+}
+
+/*
+ * isInBound is not really used for now, but will be useful later?
+ */
+function isInBound(x,y){
+	return x>-1&&x<9&&y>-1&&y<9;
+}
+
+/*
+ * randomInt returns a random integer within range of low to high.
+ */
+function randomInt(low, high){
+	return Math.round(Math.random()*(high-low)+low);
+}
+
+function getPile(x,y){
+	if(! isInBound(x,y))
+		return -1;
+	return  puzzleGrid[x][y];
+}
+
 
 /*
  * drawGrid draws the game grid on the HTMLNode node.
@@ -126,7 +124,7 @@ function drawHTMLGrid(node) {
 			let td = document.createElement("td");
 			td.setAttribute("id","x"+j+"y"+i);
 			let pile;
-			let num = sudokuGame.getPile(j,i);
+			let num =  getPile(j,i);
 			pile = document.createElement("input");
 			//will use css later
 			pile.setAttribute("autocomplete","off");
@@ -152,7 +150,7 @@ function drawHTMLGrid(node) {
 function checkResult(){
 	for(let i=0;i<9;i++){
 		for(let j=0;j<9;j++){
-			if(sudokuGame.getPile(i,j)!=0){
+			if( getPile(i,j)!=0){
 				let ansNode = document.getElementById(i+","+j);
 				if(!ansNode){
 					alert("invalid game grid!");
@@ -168,7 +166,7 @@ function checkResult(){
 					return false;
 				}
 				
-				if(!sudokuGame.isValid(i,j,ans)){
+				if(! isValid(i,j,ans)){
 					alert("a mistake is made at ("+i+","+j+")!");
 					return false;
 				}
@@ -189,10 +187,10 @@ function drawCanvasGrid(node){
 let assertTools = {
 	countNumbers : function(){
 		let result = 0;
-		console.log(sudokuGame.puzzleGrid);
-		for(let i=0;i<sudokuGame.puzzleGrid.length;i++){
-			for(let j=0;j<sudokuGame.puzzleGrid[i].length;j++){
-				if(sudokuGame.puzzleGrid[i][j]>0)
+		console.log( puzzleGrid);
+		for(let i=0;i< puzzleGrid.length;i++){
+			for(let j=0;j< puzzleGrid[i].length;j++){
+				if( puzzleGrid[i][j]>0)
 					result++;
 			}
 		}

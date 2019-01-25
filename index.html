@@ -21,7 +21,7 @@
 				let seeds = getSeeds();
 				if(seeds==-1)
 					return ;
-				sudokuGame.newGame(seeds);
+				newGame(seeds);
 				let node = document.getElementById("game");
 				drawHTMLGrid(node);
 			}
