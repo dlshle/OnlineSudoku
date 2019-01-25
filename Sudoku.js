@@ -1,13 +1,18 @@
-
-function isNumeric(target){
-	return !isNaN(parseFloat(target))&&isFinite(target);
-}
-
 var puzzleGrid = [];
 	
 var unknowns = [];
 
 var seeds = 0;
+
+function generateGrid(){
+	 puzzleGrid = [];
+	for(let i=0;i<9;i++){
+		 puzzleGrid.push([]);
+		for(let j=0;j<9;j++){
+			 puzzleGrid[i].push(0);
+		}
+	}
+}
 
 /*
  * newGame sets the puzzleGrid empty and fills 9 length 9 lists
@@ -21,13 +26,7 @@ function newGame(seeds) {
 	 seeds = seeds;
 
 	//create new puzzleGrid 
-	 puzzleGrid = [];
-	for(let i=0;i<9;i++){
-		 puzzleGrid.push([]);
-		for(let j=0;j<9;j++){
-			 puzzleGrid[i].push(0);
-		}
-	}
+	generateGrid();
 		
 	//add valid random numbers to the grid
 	let rand,randX,randY;
@@ -36,9 +35,9 @@ function newGame(seeds) {
 			rand =  randomInt(1,9);
 			randX =  randomInt(0,8);
 			randY =  randomInt(0,8);
-		} while( isAvailable(randX,randY)&&(! isValid(randX,randY,rand)));
-		console.log(randX+","+randY+":"+rand+" finished");
-		 puzzleGrid[randX][randY] = rand;
+		} while((puzzleGrid[randX][randY]==0)&&(!isValid(randX,randY,rand)));
+		//console.log(randX+","+randY+":"+rand+" finished");
+		puzzleGrid[randX][randY] = rand;
 	}
 }
 
@@ -54,7 +53,7 @@ function isValid(x,y,n){
 			vy++;
 			continue;
 		}
-		console.log("checking "+x+","+y+":"+n+" with "+x+","+vy+":"+ puzzleGrid[x][vy]);
+		//console.log("checking "+x+","+y+":"+n+" with "+x+","+vy+":"+ puzzleGrid[x][vy]);
 		if( puzzleGrid[x][vy++]==n){
 			//console.log("invalid y for ("+x+","+y+") where n="+n+", ("+x+","+vy+")="+ puzzleGrid[x][vy-1]);
 			return false;
@@ -68,7 +67,7 @@ function isValid(x,y,n){
 		}
 		//console.log("checking "+x+","+y+":"+n+" with "+vx+","+y+":"+ puzzleGrid[vx][y]);
 		if( puzzleGrid[vx++][y]==n){
-			console.log("invalid x for ("+x+","+y+") where n="+n+", ("+vx+","+y+")="+ puzzleGrid[x][vy-1]);
+			//console.log("invalid x for ("+x+","+y+") where n="+n+", ("+vx+","+y+")="+ puzzleGrid[x][vy-1]);
 			return false;
 		}
 	}
@@ -187,7 +186,7 @@ function drawCanvasGrid(node){
 let assertTools = {
 	countNumbers : function(){
 		let result = 0;
-		console.log( puzzleGrid);
+		//console.log( puzzleGrid);
 		for(let i=0;i< puzzleGrid.length;i++){
 			for(let j=0;j< puzzleGrid[i].length;j++){
 				if( puzzleGrid[i][j]>0)
@@ -196,4 +195,8 @@ let assertTools = {
 		}
 		return result;
 	}
+}
+
+function isNumeric(target){
+	return !isNaN(parseFloat(target))&&isFinite(target);
 }
