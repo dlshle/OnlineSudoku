@@ -31,11 +31,15 @@ function newGame(seeds) {
 	//add valid random numbers to the grid
 	let rand,randX,randY;
 	while(seeds-->0){
+		//find the valid position
 		do{
-			rand =  randomInt(1,9);
 			randX =  randomInt(0,8);
 			randY =  randomInt(0,8);
-		} while((puzzleGrid[randX][randY]==0)&&(!isValid(randX,randY,rand)));
+		}while(puzzleGrid[randX][randY]!=0);
+		//find the valid number
+		do{
+			rand =  randomInt(1,9);
+		} while(!isValid(randX,randY,rand));
 		//console.log(randX+","+randY+":"+rand+" finished");
 		puzzleGrid[randX][randY] = rand;
 	}
@@ -149,27 +153,32 @@ function drawHTMLGrid(node) {
 function checkResult(){
 	for(let i=0;i<9;i++){
 		for(let j=0;j<9;j++){
-			if( getPile(i,j)!=0){
+			if(getPile(i,j)==0){
 				let ansNode = document.getElementById(i+","+j);
+					
 				if(!ansNode){
 					alert("invalid game grid!");
 					return false;
 				}
+
 				let ans = ansNode.value;
+				console.log("answer at("+i+","+j+"):"+ans);
+
 				if(!isNumeric(ans)){
 					alert("invalid input for number at ("+i+","+j+")!");
 					return false;
 				}
+
 				if(ans<1||ans>9){
 					alert("invalid input for number at ("+i+","+j+") (the value should be in the range of [1,9]!");
 					return false;
 				}
 				
-				if(! isValid(i,j,ans)){
+				if(!isValid(i,j,ans)){
 					alert("a mistake is made at ("+i+","+j+")!");
 					return false;
 				}
-			}
+			} 
 		}
 	}
 	alert("Wow, you are amazing! No mistake has been made. This is the perfect solution!");
