@@ -25,17 +25,47 @@
 				let node = document.getElementById("game");
 				drawHTMLGrid(node);
 			}
-		</script>
-		<div id="game">
 
+			function newBoardGame(){
+				let newBoard = document.getElementsByName("newGrid")[0].value;
+				if(!isNumeric(newBoard)||newBoard.length!=81){
+					alert("invalid input for new board");
+					return ;
+				}
+				//if the new board is valid
+				assignGame(newBoard);
+				let node = document.getElementById("game");
+				drawHTMLGrid(node);
+			}
+
+			function solveGame(){
+				solver(document.getElementById("game"));
+			}
+		</script>
+		<div>
+			<center>
+				<h1>Stupid Online Sudoku</h1>
+	
+				<div id="game">
+	
+				</div>
+				<hr>
+				Number of seeds:
+				<br>	
+				<input type="text" name="seeds"/>
+				<br>
+				<button type="button" onclick="playGame()">Play game by seeds</button>
+				<br>
+				Assign new board:
+				<br>
+				<input type="text" name="newGrid"/>
+				<br>
+				<button type="button" onclick="newBoardGame()">Play game by new board</button>
+				<hr>
+				<button type="button" onclick="checkResult()">Check game progress</button>
+				<hr>
+				<button type="button" onclick="solveGame()">Solve game</button>
+			</center>
 		</div>
-		Number of seeds:
-		<br>
-		<input type="text" name="seeds"/>
-		<br>
-		<button type="button" onclick="playGame()">New game</button>
-		<br>
-		<button type="button">Check game</button>
-		<br>
 	</body>
 </html>

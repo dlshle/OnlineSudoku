@@ -147,6 +147,26 @@ function drawHTMLGrid(node) {
 	node.append(table);
 }
 
+function assignGame(data){
+	let newSeeds = 0;
+	let newBoard = [];
+	let row = -1;
+	for(let i=0;i<data.length;i++){
+		if(i%9==0){
+			newBoard.push([]);
+			row++;
+		}
+		if(data[i]<1||data[i]>9){
+			newBoard[row].push(0);	
+		}else{	
+			newSeeds++;
+			newBoard[row].push(data[i]);
+		}
+	}
+	seeds = newSeeds;
+	puzzleGrid = newBoard;
+}
+
 /*
  *checkResult checks the result one by one
  */
@@ -162,20 +182,19 @@ function checkResult(){
 				}
 
 				let ans = ansNode.value;
-				console.log("answer at("+i+","+j+"):"+ans);
 
 				if(!isNumeric(ans)){
-					alert("invalid input for number at ("+i+","+j+")!");
+					alert("invalid input for number at ("+j+","+i+")!");
 					return false;
 				}
 
 				if(ans<1||ans>9){
-					alert("invalid input for number at ("+i+","+j+") (the value should be in the range of [1,9]!");
+					alert("invalid input for number at ("+j+","+i+") (the value should be in the range of [1,9]!");
 					return false;
 				}
 				
 				if(!isValid(i,j,ans)){
-					alert("a mistake is made at ("+i+","+j+")!");
+					alert("a mistake is made at ("+j+","+i+")!");
 					return false;
 				}
 			} 
@@ -183,6 +202,43 @@ function checkResult(){
 	}
 	alert("Wow, you are amazing! No mistake has been made. This is the perfect solution!");
 	return true;
+}
+
+function solver(node){
+	if(puzzleGrid.length<9){
+		alert("You need to start the game by assigning seeds or a game grid");
+		return ;
+	}
+	if(solve(0,0)){
+		//just draw the grid
+		drawHTMLGrid(node);
+	}else{
+		alert("invalid game grid!");
+	}
+}
+
+function solve(x,y){
+	if(x==9){
+		alert("game has been sucessfully solved!");
+		return true;
+	}
+	if(y==9){
+		return solve(x+1,0);
+	}
+	if(puzzleGrid[x][y]!=0){
+		return 	solve(x,y+1);
+	}
+	for(let i=1;i<10;i++){
+		if(isValid(x,y,i)){
+			//if thie number works
+			puzzleGrid[x][y]=i;
+			if(solve(x,y+1))
+				return true;
+		}
+	}
+	//if all numbers dont work, remove the number and return false
+	puzzleGrid[x][y] = 0;
+	return false;
 }
 
 /*
