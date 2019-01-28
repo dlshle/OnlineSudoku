@@ -251,6 +251,7 @@ function solve(x,y){
  * findAllSolution will call allSolution and print the result
  */
 function findAllSolution(node){
+	solutionCount = 0;
 	node.innerHTML = "";
 	let result = document.createElement("p");
 	allSolution(0,0,node);
