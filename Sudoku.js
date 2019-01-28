@@ -4,8 +4,10 @@ var unknowns = [];
 
 var seeds = 0;
 
+var solutionCount;
+
 function generateGrid(){
-	 puzzleGrid = [];
+	puzzleGrid = [];
 	for(let i=0;i<9;i++){
 		 puzzleGrid.push([]);
 		for(let j=0;j<9;j++){
@@ -19,6 +21,9 @@ function generateGrid(){
  * and fills them all 0s and fills n(seeds) valid numbers. 
  */
 function newGame(seeds) {
+	//re new solutionCount
+	solutionCount = 0;
+
 	//check if the seeds is valid
 	if(seeds<0||seeds>80)
 		return false;
@@ -27,7 +32,7 @@ function newGame(seeds) {
 
 	//create new puzzleGrid 
 	generateGrid();
-		
+	
 	//add valid random numbers to the grid
 	let rand,randX,randY;
 	while(seeds-->0){
@@ -148,6 +153,7 @@ function drawHTMLGrid(node) {
 }
 
 function assignGame(data){
+	solutionCount = 0;
 	let newSeeds = 0;
 	let newBoard = [];
 	let row = -1;
@@ -239,6 +245,59 @@ function solve(x,y){
 	//if all numbers dont work, remove the number and return false
 	puzzleGrid[x][y] = 0;
 	return false;
+}
+
+/*
+ * findAllSolution will call allSolution and print the result
+ */
+function findAllSolution(node){
+	node.innerHTML = "";
+	let result = document.createElement("p");
+	allSolution(0,0,node);
+	result.innerHTML = "There are "+solutionCount+" solutions for this specific sudoku problem:";
+	node.insertBefore(result, node.firstChild);
+}
+
+/*
+ * allSolution tries to find all valid soltuion to a certain sudoku problem.
+ */
+function allSolution(x,y,node){
+	if(x==9){
+		printSolution(node);
+		solutionCount++;
+		return ;
+	}
+	if(y==9){
+		allSolution(x+1,0,node);
+		return ;
+	}
+	if(puzzleGrid[x][y]!=0){
+		allSolution(x,y+1,node);
+		return ;
+	}
+	for(let i=1;i<10;i++){
+		if(isValid(x,y,i)){
+			puzzleGrid[x][y]=i;
+			allSolution(x,y+1,node);
+		}
+		puzzleGrid[x][y] = 0;
+	}
+}
+
+function printSolution(node){
+	let table = document.createElement("table");
+	//insert trs and tds
+	for(let i=0;i<9;i++){
+		let tr = document.createElement("tr");
+		for(let j=0;j<9;j++){
+			let td = document.createElement("td");
+			td.innerText = getPile(j,i);
+			tr.append(td);
+		}
+		table.append(tr);
+	}
+	node.append(document.createElement("br"));
+	node.append(table);
 }
 
 /*

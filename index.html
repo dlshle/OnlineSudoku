@@ -41,6 +41,10 @@
 			function solveGame(){
 				solver(document.getElementById("game"));
 			}
+
+			function findAllSol(){
+				findAllSolution(document.getElementById("allSolution"));
+			}
 		</script>
 		<div>
 			<center>
@@ -66,6 +70,12 @@
 				<button type="button" onclick="checkResult()">Check game progress</button>
 				<hr>
 				<button type="button" onclick="solveGame()">Solve game</button>
+				<hr>
+				<button type="button" onclick="findAllSol()">Find all solutions</button>
+				<br>
+				<div id="allSolution">
+
+				</div>
 			</center>
 		</div>
 	</body>
